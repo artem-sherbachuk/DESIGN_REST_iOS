@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		7C090EF3F7DE6F4377D66CD4 /* Pods_REST.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECD9E5489F5E23771D236D66 /* Pods_REST.framework */; };
+		AC8A29F41DC8E375001515E9 /* GitHubAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC8A29F31DC8E375001515E9 /* GitHubAPIService.swift */; };
+		AC8A29F61DC8E405001515E9 /* APIRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC8A29F51DC8E405001515E9 /* APIRouter.swift */; };
 		AC94EA481DC78ACB00EA6AAB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC94EA471DC78ACB00EA6AAB /* AppDelegate.swift */; };
 		AC94EA4A1DC78ACB00EA6AAB /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC94EA491DC78ACB00EA6AAB /* MasterViewController.swift */; };
 		AC94EA4C1DC78ACB00EA6AAB /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC94EA4B1DC78ACB00EA6AAB /* DetailViewController.swift */; };
@@ -39,6 +41,8 @@
 /* Begin PBXFileReference section */
 		3DB63B15ABE9D93A19134FB4 /* Pods-REST.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-REST.debug.xcconfig"; path = "Pods/Target Support Files/Pods-REST/Pods-REST.debug.xcconfig"; sourceTree = "<group>"; };
 		721AAF3FFECFCAD93E9B2419 /* Pods-REST.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-REST.release.xcconfig"; path = "Pods/Target Support Files/Pods-REST/Pods-REST.release.xcconfig"; sourceTree = "<group>"; };
+		AC8A29F31DC8E375001515E9 /* GitHubAPIService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GitHubAPIService.swift; sourceTree = "<group>"; };
+		AC8A29F51DC8E405001515E9 /* APIRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIRouter.swift; sourceTree = "<group>"; };
 		AC94EA441DC78ACB00EA6AAB /* REST.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = REST.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC94EA471DC78ACB00EA6AAB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AC94EA491DC78ACB00EA6AAB /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
@@ -83,6 +87,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AC8A29F21DC8E33C001515E9 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				AC8A29F71DC8E986001515E9 /* Network */,
+			);
+			name = Services;
+			sourceTree = "<group>";
+		};
+		AC8A29F71DC8E986001515E9 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				AC8A29F31DC8E375001515E9 /* GitHubAPIService.swift */,
+				AC8A29F51DC8E405001515E9 /* APIRouter.swift */,
+			);
+			name = Network;
+			sourceTree = "<group>";
+		};
 		AC94EA3B1DC78ACB00EA6AAB = {
 			isa = PBXGroup;
 			children = (
@@ -109,6 +130,7 @@
 			isa = PBXGroup;
 			children = (
 				AC94EA471DC78ACB00EA6AAB /* AppDelegate.swift */,
+				AC8A29F21DC8E33C001515E9 /* Services */,
 				AC94EA7D1DC78BFA00EA6AAB /* Master Screen */,
 				AC94EA7C1DC78BE900EA6AAB /* Detail Screen */,
 				AC94EA501DC78ACB00EA6AAB /* Assets.xcassets */,
@@ -361,8 +383,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				AC94EA4C1DC78ACB00EA6AAB /* DetailViewController.swift in Sources */,
+				AC8A29F61DC8E405001515E9 /* APIRouter.swift in Sources */,
 				AC94EA4A1DC78ACB00EA6AAB /* MasterViewController.swift in Sources */,
 				AC94EA481DC78ACB00EA6AAB /* AppDelegate.swift in Sources */,
+				AC8A29F41DC8E375001515E9 /* GitHubAPIService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
