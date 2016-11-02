@@ -4,4 +4,5 @@ use_frameworks!
 
 target 'REST' do
     pod 'Alamofire', '~> 4.0'
+    pod 'PINRemoteImage'
 end

@@ -10,7 +10,6 @@ import Foundation
 import Alamofire
 
 /*
- We’ll include five error cases:
  1. A generic networking error that wraps up another error. That’ll be handy for when Alamofire
  gives us an error
  2. The API gave us an error message in the JSON that it returned
@@ -21,22 +20,22 @@ import Alamofire
 enum GitHubAPIManagerError: Error {
     case netWork(error: Error)
     case apiProviderError(reason: String)
-    case authCloudNot(reason: String)
+    case authCouldNot(reason: String)
     case objectSerialization(reason: String)
 }
 
 
-class GitHubAPIService {
-    static let sharedInstance = GitHubAPIService()
+final class GitHubAPIService {
+    //static let sharedInstance = GitHubAPIService()
     
     static func fetchPublicGist(completion: @escaping (Result<[Gist]>) -> Void) {
         Alamofire.request(GistRouter.getPublic()).responseJSON { (response) in
-            let result = GitHubAPIService.sharedInstance.gistArrayFromResponse(response: response)
+            let result = GitHubAPIService.gistArrayFromResponse(response: response)
             completion(result)
         }
     }
     
-    private func gistArrayFromResponse(response: DataResponse<Any>) -> Result<[Gist]> {
+    private static func gistArrayFromResponse(response: DataResponse<Any>) -> Result<[Gist]> {
         if let error = response.result.error {
             print("response.result.error: \(error)")
             return Result.failure(GitHubAPIManagerError.netWork(error: error))

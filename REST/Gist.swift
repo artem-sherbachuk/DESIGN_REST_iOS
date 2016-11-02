@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Gist {
+final class Gist {
     var id: String?
     var description: String?
     var ownerLogin: String?

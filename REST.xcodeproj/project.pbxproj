@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		7C090EF3F7DE6F4377D66CD4 /* Pods_REST.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ECD9E5489F5E23771D236D66 /* Pods_REST.framework */; };
+		AC1323591DCA8CF100EF4321 /* GistTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC1323581DCA8CF100EF4321 /* GistTableViewCell.swift */; };
 		AC8A29F41DC8E375001515E9 /* GitHubAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC8A29F31DC8E375001515E9 /* GitHubAPIService.swift */; };
 		AC8A29F61DC8E405001515E9 /* APIRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC8A29F51DC8E405001515E9 /* APIRouter.swift */; };
 		AC8A29FA1DC8EAAA001515E9 /* Gist.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC8A29F91DC8EAAA001515E9 /* Gist.swift */; };
@@ -43,6 +44,7 @@
 /* Begin PBXFileReference section */
 		3DB63B15ABE9D93A19134FB4 /* Pods-REST.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-REST.debug.xcconfig"; path = "Pods/Target Support Files/Pods-REST/Pods-REST.debug.xcconfig"; sourceTree = "<group>"; };
 		721AAF3FFECFCAD93E9B2419 /* Pods-REST.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-REST.release.xcconfig"; path = "Pods/Target Support Files/Pods-REST/Pods-REST.release.xcconfig"; sourceTree = "<group>"; };
+		AC1323581DCA8CF100EF4321 /* GistTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GistTableViewCell.swift; sourceTree = "<group>"; };
 		AC8A29F31DC8E375001515E9 /* GitHubAPIService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GitHubAPIService.swift; sourceTree = "<group>"; };
 		AC8A29F51DC8E405001515E9 /* APIRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIRouter.swift; sourceTree = "<group>"; };
 		AC8A29F91DC8EAAA001515E9 /* Gist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gist.swift; sourceTree = "<group>"; };
@@ -185,6 +187,7 @@
 			children = (
 				AC94EA491DC78ACB00EA6AAB /* MasterViewController.swift */,
 				AC8A29FB1DC906FF001515E9 /* GistsTableView.swift */,
+				AC1323581DCA8CF100EF4321 /* GistTableViewCell.swift */,
 				AC94EA4D1DC78ACB00EA6AAB /* Main.storyboard */,
 			);
 			name = "Master Screen";
@@ -400,6 +403,7 @@
 				AC8A29FC1DC906FF001515E9 /* GistsTableView.swift in Sources */,
 				AC8A29F61DC8E405001515E9 /* APIRouter.swift in Sources */,
 				AC8A29FA1DC8EAAA001515E9 /* Gist.swift in Sources */,
+				AC1323591DCA8CF100EF4321 /* GistTableViewCell.swift in Sources */,
 				AC94EA4A1DC78ACB00EA6AAB /* MasterViewController.swift in Sources */,
 				AC94EA481DC78ACB00EA6AAB /* AppDelegate.swift in Sources */,
 				AC8A29F41DC8E375001515E9 /* GitHubAPIService.swift in Sources */,

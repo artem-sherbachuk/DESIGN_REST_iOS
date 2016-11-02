@@ -8,7 +8,7 @@
 
 import UIKit
 
-class GistsTableView: UITableView, UITableViewDataSource, UITableViewDelegate {
+final class GistsTableView: UITableView, UITableViewDataSource, UITableViewDelegate {
     
     override func awakeFromNib() {
         self.dataSource = self
@@ -33,11 +33,8 @@ class GistsTableView: UITableView, UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        
-        let gist = gists[indexPath.row]
-        cell.textLabel!.text = gist.description
-        cell.detailTextLabel?.text = gist.ownerLogin
+        let cell = tableView.dequeueReusableCell(withIdentifier: "GistCell", for: indexPath) as! GistTableViewCell
+        cell.gist = gists[indexPath.row]
         return cell
     }
     

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class MasterViewController: UITableViewController {
+final class MasterViewController: UITableViewController {
 
     @IBOutlet var gistsTableView: GistsTableView!
     var detailViewController: DetailViewController? = nil
