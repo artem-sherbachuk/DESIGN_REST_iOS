@@ -11,7 +11,9 @@ import UIKit
 final class MasterViewController: UITableViewController {
 
     @IBOutlet var gistsTableView: GistsTableView!
+    
     var detailViewController: DetailViewController? = nil
+    
     var gists = [Gist]() {
         didSet {
             self.gistsTableView.gists = gists
@@ -21,7 +23,7 @@ final class MasterViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+
         func setupNavigation() {
             self.navigationItem.leftBarButtonItem = self.editButtonItem
             
@@ -33,16 +35,19 @@ final class MasterViewController: UITableViewController {
             }
         }
         setupNavigation()
+        
+        loadGistsFromNetwork()
+        
+        gistsTableView.onLoadMoreGistsEvent { [weak self] in
+            if let s = self {
+                s.loadGistsFromNetwork()
+            }
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         self.clearsSelectionOnViewWillAppear = self.splitViewController!.isCollapsed
         super.viewWillAppear(animated)
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        loadGists()
     }
 
     override func didReceiveMemoryWarning() {
@@ -50,13 +55,13 @@ final class MasterViewController: UITableViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    func loadGists() {
-        GitHubAPIService.fetchPublicGist { result in
+    func loadGistsFromNetwork() {
+        GitHubAPIService.fetchPublicGists { result in
             if let error = result.error {
                 self.handleLoadGistsError(error)
             }
             if let fetchedGists = result.value {
-                self.gists = fetchedGists
+                self.gists = self.gists + fetchedGists
             }
         }
     }

@@ -9,10 +9,19 @@
 import UIKit
 import PINRemoteImage
 
+@IBDesignable
 class GistTableViewCell: UITableViewCell {
+    
+    override func prepareForInterfaceBuilder() {
+        addDesign()
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        addDesign()
+    }
+    
+    private func addDesign() {
         let separatorLayer = CALayer()
         separatorLayer.backgroundColor = UIColor.darkGray.cgColor
         separatorLayer.frame = CGRect(x: 0, y: self.bounds.height-3, width: UIScreen.main.bounds.width, height: 3)

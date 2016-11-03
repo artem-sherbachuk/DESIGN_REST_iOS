@@ -22,12 +22,12 @@ enum GistRouter: URLRequestConvertible {
     static let baseURLString = "https://api.github.com/"
     
     
-    case getPublic()
+    case getPublic(String?)
     
     
     private var method: HTTPMethod {
         switch self {
-        case .getPublic():
+        case .getPublic:
             return .get
         }
     }
@@ -35,7 +35,10 @@ enum GistRouter: URLRequestConvertible {
     private var url: URL {
         let publicPath: String
         switch self {
-        case .getPublic():
+        case .getPublic(let nextPageURL):
+            if let nextPageURL = nextPageURL { //if alredy have url to next page then don't construct it
+                return URL(string: nextPageURL)!
+            }
             publicPath = "gists/public"
         }
         let url = URL(string: GistRouter.baseURLString)!.appendingPathComponent(publicPath)
@@ -44,7 +47,7 @@ enum GistRouter: URLRequestConvertible {
     
     private var parameters: [String: Any]? {
         switch self {
-        case .getPublic():
+        case .getPublic:
             return nil
         }
     }

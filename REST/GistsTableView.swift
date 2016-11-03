@@ -20,6 +20,9 @@ final class GistsTableView: UITableView, UITableViewDataSource, UITableViewDeleg
             self.reloadData()
         }
     }
+    
+    typealias EventCompletion = (Void) -> Void //event instead of delegate
+    private var loadMoreGistsEventCompletion: EventCompletion?
 
     
     // MARK: - Table View
@@ -35,7 +38,17 @@ final class GistsTableView: UITableView, UITableViewDataSource, UITableViewDeleg
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "GistCell", for: indexPath) as! GistTableViewCell
         cell.gist = gists[indexPath.row]
+        
+        if isNeedLoadMoreGists(indexPath: indexPath) {
+            self.loadMoreGistsEventCompletion?()
+        }
         return cell
+    }
+    private func isNeedLoadMoreGists(indexPath: IndexPath) -> Bool {
+        let rowsLoaded = gists.count
+        let rowsRemaining = rowsLoaded - indexPath.row
+        let loadingThreshold = 5
+        return rowsRemaining <= loadingThreshold
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -50,5 +63,11 @@ final class GistsTableView: UITableView, UITableViewDataSource, UITableViewDeleg
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
         }
+    }
+    
+    
+    //MARK: Public API
+    func onLoadMoreGistsEvent(comletion: @escaping EventCompletion) {
+        self.loadMoreGistsEventCompletion = comletion
     }
 }

@@ -26,16 +26,40 @@ enum GitHubAPIManagerError: Error {
 
 
 final class GitHubAPIService {
-    //static let sharedInstance = GitHubAPIService()
+    private static let sharedInstance = GitHubAPIService()
     
-    static func fetchPublicGist(completion: @escaping (Result<[Gist]>) -> Void) {
-        Alamofire.request(GistRouter.getPublic()).responseJSON { (response) in
-            let result = GitHubAPIService.gistArrayFromResponse(response: response)
+    private var nextGistsPageURL: String?
+    private var isLoading = false
+    
+    static func fetchPublicGists(completion: @escaping (Result<[Gist]>) -> Void) {
+        let service = GitHubAPIService.sharedInstance
+        if GitHubAPIService.sharedInstance.isLoading {return} //don't try load if loading not ended
+        service.isLoading = true
+        Alamofire.request(GistRouter.getPublic(service.nextGistsPageURL)).responseJSON { (response) in
+            let result = service.gistArrayFromResponse(response: response)
+            service.nextGistsPageURL = service.parseNextPageFromHeaders(response: response.response)
             completion(result)
+            service.isLoading = false
         }
     }
     
-    private static func gistArrayFromResponse(response: DataResponse<Any>) -> Result<[Gist]> {
+    private func parseNextPageFromHeaders(response: HTTPURLResponse?) -> String? {
+        guard let linksFromHeader = response?.allHeaderFields["Link"] as? String else {return nil}
+        let links = linksFromHeader.characters.split{ $0 == ","}.map{String($0)}
+        
+        for link in links where link.contains("rel=\"next\"") {
+            let url = link.replacingOccurrences(of: "<", with: "")
+                .replacingOccurrences(of: ">", with: "")
+                .replacingOccurrences(of: ";", with: "")
+                .replacingOccurrences(of: "rel=\"next\"", with: "")
+                .replacingOccurrences(of: " ", with: "")
+            return url
+        }
+        
+        return nil
+    }
+    
+    private func gistArrayFromResponse(response: DataResponse<Any>) -> Result<[Gist]> {
         if let error = response.result.error {
             print("response.result.error: \(error)")
             return Result.failure(GitHubAPIManagerError.netWork(error: error))
