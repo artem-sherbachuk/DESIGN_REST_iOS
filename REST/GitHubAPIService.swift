@@ -43,6 +43,20 @@ final class GitHubAPIService {
         }
     }
     
+    static func clearAllCache() {
+        let service = GitHubAPIService.sharedInstance
+        service.nextGistsPageURL = nil
+        let cashe = URLCache.shared
+        cashe.removeAllCachedResponses()
+    }
+    
+    static func printMyStartedGistWithBasicAuth() {
+        Alamofire.request(GistRouter.getMyStarted()).responseString { response in
+            guard let receivedString = response.result.value else {return}
+            debugPrint(receivedString)
+        }
+    }
+    
     private func parseNextPageFromHeaders(response: HTTPURLResponse?) -> String? {
         guard let linksFromHeader = response?.allHeaderFields["Link"] as? String else {return nil}
         let links = linksFromHeader.characters.split{ $0 == ","}.map{String($0)}

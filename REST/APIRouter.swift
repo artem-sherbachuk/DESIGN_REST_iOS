@@ -23,31 +23,36 @@ enum GistRouter: URLRequestConvertible {
     
     
     case getPublic(String?)
+    case getMyStarted()
     
     
     private var method: HTTPMethod {
         switch self {
-        case .getPublic:
+        case .getPublic, .getMyStarted:
             return .get
         }
     }
     
     private var url: URL {
-        let publicPath: String
+        
+        let casePath: String
         switch self {
         case .getPublic(let nextPageURL):
             if let nextPageURL = nextPageURL { //if alredy have url to next page then don't construct it
                 return URL(string: nextPageURL)!
             }
-            publicPath = "gists/public"
+            casePath = "gists/public"
+        case .getMyStarted():
+            casePath = "gists/starred"
         }
-        let url = URL(string: GistRouter.baseURLString)!.appendingPathComponent(publicPath)
+        
+        let url = URL(string: GistRouter.baseURLString)!.appendingPathComponent(casePath)
         return url
     }
     
     private var parameters: [String: Any]? {
         switch self {
-        case .getPublic:
+        case .getPublic, .getMyStarted():
             return nil
         }
     }

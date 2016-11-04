@@ -11,6 +11,7 @@ import UIKit
 final class MasterViewController: UITableViewController {
 
     @IBOutlet var gistsTableView: GistsTableView!
+    @IBOutlet weak var pullToRefresh: UIRefreshControl!
     
     var detailViewController: DetailViewController? = nil
     
@@ -63,6 +64,10 @@ final class MasterViewController: UITableViewController {
             if let fetchedGists = result.value {
                 self.gists = self.gists + fetchedGists
             }
+            
+            if self.pullToRefresh.isRefreshing {
+               self.pullToRefresh.endRefreshing()
+            }
         }
     }
     
@@ -77,6 +82,13 @@ final class MasterViewController: UITableViewController {
         self.present(alert, animated: true, completion: nil)
     }
 
+    @IBAction func pullToRefresh(_ sender: UIRefreshControl) {
+        GitHubAPIService.clearAllCache()
+        self.gists.removeAll()
+        self.loadGistsFromNetwork()
+    }
+    
+    
     // MARK: - Segues
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
