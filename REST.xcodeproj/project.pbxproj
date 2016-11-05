@@ -64,6 +64,7 @@
 		AC94EA691DC78ACB00EA6AAB /* RESTUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RESTUITests.swift; sourceTree = "<group>"; };
 		AC94EA6B1DC78ACB00EA6AAB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AC94EA7A1DC78B5200EA6AAB /* Detail.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Detail.storyboard; sourceTree = "<group>"; };
+		ACCC84E11DCE1B5100967CD5 /* REST.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = REST.entitlements; sourceTree = "<group>"; };
 		ECD9E5489F5E23771D236D66 /* Pods_REST.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_REST.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -143,6 +144,7 @@
 		AC94EA461DC78ACB00EA6AAB /* REST */ = {
 			isa = PBXGroup;
 			children = (
+				ACCC84E11DCE1B5100967CD5 /* REST.entitlements */,
 				AC94EA471DC78ACB00EA6AAB /* AppDelegate.swift */,
 				AC8A29F81DC8EA9B001515E9 /* Models */,
 				AC8A29F21DC8E33C001515E9 /* Services */,
@@ -283,6 +285,11 @@
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = F239PGHZ78;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Keychain = {
+								enabled = 1;
+							};
+						};
 					};
 					AC94EA591DC78ACB00EA6AAB = {
 						CreatedOnToolsVersion = 8.0;
@@ -562,6 +569,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = REST/REST.entitlements;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = F239PGHZ78;
 				INFOPLIST_FILE = REST/Info.plist;
@@ -578,6 +586,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = REST/REST.entitlements;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = F239PGHZ78;
 				INFOPLIST_FILE = REST/Info.plist;

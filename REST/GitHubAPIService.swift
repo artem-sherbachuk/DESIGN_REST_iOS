@@ -9,6 +9,7 @@
 import Foundation
 import Alamofire
 import SafariServices
+import Locksmith
 
 /*
  1. A generic networking error that wraps up another error. That’ll be handy for when Alamofire
@@ -103,7 +104,22 @@ final class GitHubAPIService: NSObject {
     private static let clientID = "e1af210403d248c875c0"
     private static let clientSecret = "c109ebdeed7636e133c076c8dc8f25cfe4713a32"
     fileprivate weak var safariVC: SFSafariViewController?
-    private var OAuthToken: String?
+    private var OAuthToken: String? {
+        set {
+            guard let newValue = newValue else {
+                let _ = try? Locksmith.deleteDataForUserAccount(userAccount: "github")
+                return
+            }
+            guard let _ = try? Locksmith.updateData(data: ["token": newValue], forUserAccount: "github") else {
+                                                        let _ = try? Locksmith.deleteDataForUserAccount(userAccount: "github")
+                                                        return
+            }
+        }
+        get {
+            let dictionary = Locksmith.loadDataForUserAccount(userAccount: "github")
+            return dictionary?["token"] as? String
+        }
+    }
     
     
     static func isHasOAuthToken() -> Bool {
