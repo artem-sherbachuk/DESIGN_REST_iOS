@@ -144,15 +144,15 @@
 		AC94EA461DC78ACB00EA6AAB /* REST */ = {
 			isa = PBXGroup;
 			children = (
-				ACCC84E11DCE1B5100967CD5 /* REST.entitlements */,
+				AC94EA551DC78ACB00EA6AAB /* Info.plist */,
+				AC94EA521DC78ACB00EA6AAB /* LaunchScreen.storyboard */,
 				AC94EA471DC78ACB00EA6AAB /* AppDelegate.swift */,
 				AC8A29F81DC8EA9B001515E9 /* Models */,
 				AC8A29F21DC8E33C001515E9 /* Services */,
 				AC94EA7D1DC78BFA00EA6AAB /* Master Screen */,
 				AC94EA7C1DC78BE900EA6AAB /* Detail Screen */,
 				AC94EA501DC78ACB00EA6AAB /* Assets.xcassets */,
-				AC94EA521DC78ACB00EA6AAB /* LaunchScreen.storyboard */,
-				AC94EA551DC78ACB00EA6AAB /* Info.plist */,
+				ACCC84E11DCE1B5100967CD5 /* REST.entitlements */,
 			);
 			path = REST;
 			sourceTree = "<group>";
