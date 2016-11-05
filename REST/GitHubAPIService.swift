@@ -31,9 +31,9 @@ final class GitHubAPIService: NSObject {
     private(set) var nextGistsPageURL: String?
     private(set) var isLoading = false
     
-    typealias FetchingGistsCompletiomn = (Result<[Gist]>) -> Void
+    typealias FetchGistsCompletion = (Result<[Gist]>) -> Void
     
-    static func fetchGists(url: URLRequestConvertible, completion: @escaping FetchingGistsCompletiomn) {
+    static func fetchGists(url: URLRequestConvertible, completion: @escaping FetchGistsCompletion) {
         let service = GitHubAPIService.sharedInstance
         if GitHubAPIService.sharedInstance.isLoading {return} //don't try load if loading not ended
         service.isLoading = true

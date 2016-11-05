@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import NVActivityIndicatorView
 
-final class MasterViewController: UITableViewController {
+final class MasterViewController: UITableViewController, NVActivityIndicatorViewable {
 
     @IBOutlet var gistsTableView: GistsTableView!
     @IBOutlet weak var pullToRefresh: UIRefreshControl!
@@ -55,16 +56,19 @@ final class MasterViewController: UITableViewController {
     func loadGistsFromNetwork() {
         
         func fetch(req: GistRouter) {
-            GitHubAPIService.fetchGists(url: req) { result in
-                if let error = result.error {
-                    self.handleLoadGistsError(error)
+            startAnimating(CGSize(width: 50, height: 50), message: "loading", type: .ballTrianglePath, color: .yellow)
+            GitHubAPIService.fetchGists(url: req) { [weak self] result in
+                self?.stopAnimating()
+                guard let s = self, result.error == nil else {
+                    self?.handleLoadGistsError(result.error!)
+                    return
                 }
                 if let fetchedGists = result.value {
-                    self.gists = self.gists + fetchedGists
+                    s.gists = s.gists + fetchedGists
                 }
                 
-                if self.pullToRefresh.isRefreshing {
-                    self.pullToRefresh.endRefreshing()
+                if s.pullToRefresh.isRefreshing {
+                    s.pullToRefresh.endRefreshing()
                 }
             }
         }
@@ -93,13 +97,17 @@ final class MasterViewController: UITableViewController {
     }
     
     func handleLoadGistsError(_ error: Error) {
-        // TODO: show error
+        self.gists.removeAll()
+        let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
     }
 
     func insertNewObject(_ sender: Any) {
         let alert = UIAlertController(title: "Not Implemented",
                                       message: "Can't create new gists yet, will implement later",
                                       preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
 
