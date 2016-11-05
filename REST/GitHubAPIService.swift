@@ -8,6 +8,7 @@
 
 import Foundation
 import Alamofire
+import SafariServices
 
 /*
  1. A generic networking error that wraps up another error. That’ll be handy for when Alamofire
@@ -24,12 +25,12 @@ enum GitHubAPIManagerError: Error {
     case objectSerialization(reason: String)
 }
 
-
-final class GitHubAPIService {
-    private static let sharedInstance = GitHubAPIService()
+final class GitHubAPIService: NSObject {
+    fileprivate static let sharedInstance = GitHubAPIService()
     
     private var nextGistsPageURL: String?
     private var isLoading = false
+    
     
     static func fetchPublicGists(completion: @escaping (Result<[Gist]>) -> Void) {
         let service = GitHubAPIService.sharedInstance
@@ -42,21 +43,6 @@ final class GitHubAPIService {
             service.isLoading = false
         }
     }
-    
-    static func clearAllCache() {
-        let service = GitHubAPIService.sharedInstance
-        service.nextGistsPageURL = nil
-        let cashe = URLCache.shared
-        cashe.removeAllCachedResponses()
-    }
-    
-    static func printMyStartedGistWithBasicAuth() {
-        Alamofire.request(GistRouter.getMyStarted()).responseString { response in
-            guard let receivedString = response.result.value else {return}
-            debugPrint(receivedString)
-        }
-    }
-    
     private func parseNextPageFromHeaders(response: HTTPURLResponse?) -> String? {
         guard let linksFromHeader = response?.allHeaderFields["Link"] as? String else {return nil}
         let links = linksFromHeader.characters.split{ $0 == ","}.map{String($0)}
@@ -72,7 +58,6 @@ final class GitHubAPIService {
         
         return nil
     }
-    
     private func gistArrayFromResponse(response: DataResponse<Any>) -> Result<[Gist]> {
         if let error = response.result.error {
             print("response.result.error: \(error)")
@@ -93,5 +78,91 @@ final class GitHubAPIService {
         
         let gists = jsonArray.flatMap{ Gist(json: $0) }
         return Result.success(gists)
+    }
+    
+    
+    static func clearAllCache() {
+        let service = GitHubAPIService.sharedInstance
+        service.nextGistsPageURL = nil
+        let cashe = URLCache.shared
+        cashe.removeAllCachedResponses()
+    }
+    
+    
+    static func printUserGists() { //require authentification
+        let req = GistRouter.getUserGists()
+        Alamofire.request(req).responseString { response in
+            guard let receivedString = response.result.value else {return}
+            debugPrint(receivedString)
+        }
+    }
+    
+    
+    //MARK: - OAuth2
+    //---------------------------------------------------------------------------------//
+    private static let clientID = "e1af210403d248c875c0"
+    private static let clientSecret = "c109ebdeed7636e133c076c8dc8f25cfe4713a32"
+    fileprivate weak var safariVC: SFSafariViewController?
+    private var OAuthToken: String?
+    
+    
+    static func isHasOAuthToken() -> Bool {
+        return GitHubAPIService.sharedInstance.OAuthToken != nil
+    }
+    
+    static func getOAuth2Token() -> String? {
+        return GitHubAPIService.sharedInstance.OAuthToken
+    }
+    
+    
+    static func OAuth2Login(fromVC: UIViewController) {
+        let actionSheet = UIAlertController(title: "Github Authorization",
+                                            message: "You must authorize to be able use advanced feature of this app",
+                                            preferredStyle: .actionSheet)
+        let gitOAuth = UIAlertAction(title: "Git OAuth", style: .default, handler: { _ in
+            let service = GitHubAPIService.sharedInstance
+            let authURL = URL(string: "https://github.com/login/oauth/authorize?client_id=\(clientID)&scope=gist&state=TEST_STATE")!
+            let safariVC = SFSafariViewController(url: authURL)
+            service.safariVC = safariVC
+            service.safariVC!.delegate = service
+            fromVC.present(service.safariVC!, animated: true, completion: nil)
+        })
+        actionSheet.addAction(gitOAuth)
+        let cancel = UIAlertAction(title: "Cancel", style: .destructive, handler: nil)
+        actionSheet.addAction(cancel)
+        fromVC.present(actionSheet, animated: true, completion: nil)
+    }
+    
+    
+    static func processOAuthURLCallback(url: URL) { //exchange callback url code on OAuth2 token
+        guard let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems else {return}
+        for item in queryItems where item.name.lowercased() == "code" {
+            if let code = item.value {
+                GitHubAPIService.OAuthStart(code: code)
+            }
+        }
+    }
+    private static func OAuthStart(code: String) {
+        let urlRequest = GistRouter.OAuth2(clientID: clientID, clientSecret: clientSecret, code: code)
+        Alamofire.request(urlRequest)
+            .responseString { response in
+                guard let result = response.result.value, response.result.error == nil else {
+                    print(response.result.error!); return;
+                }
+                let token = result.replacingOccurrences(of: "access_token=", with: "")
+                    .replacingOccurrences(of: "&scope=gist&token_type=bearer", with: "")//remove messy, get token code
+                GitHubAPIService.sharedInstance.OAuthToken = token
+                GitHubAPIService.printUserGists()
+        }
+        
+    }
+}
+
+extension GitHubAPIService: SFSafariViewControllerDelegate {
+    func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
+        if !didLoadSuccessfully {
+            controller.dismiss(animated: true, completion: nil)
+            GitHubAPIService.sharedInstance.safariVC = nil
+        }
     }
 }

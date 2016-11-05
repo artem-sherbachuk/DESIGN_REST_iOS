@@ -10,26 +10,46 @@ import Foundation
 import Alamofire
 
 enum GistRouter: URLRequestConvertible {
+    
     func asURLRequest() throws -> URLRequest {
         
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = method.rawValue
+        
+        switch self {
+        case .basicAuth(let username, let password):
+            if let credentialData = "\(username):\(password)".data(using: String.Encoding.utf8) {
+                let base64Credentials = credentialData.base64EncodedString()
+                urlRequest.setValue("Basic \(base64Credentials)", forHTTPHeaderField: "Authorization")
+            }
+        case .OAuth2:
+            return try URLEncoding.default.encode(urlRequest, with: parameters)
+        default: break
+        }
+        
+        if let OAuth2Token = GitHubAPIService.getOAuth2Token() { //if have OAuth2 accsess token inject it for every API call
+            urlRequest.setValue("token \(OAuth2Token)", forHTTPHeaderField: "Authorization")
+        }
         
         return try JSONEncoding.default.encode(urlRequest, with: parameters)
     }
     
     
     static let baseURLString = "https://api.github.com/"
-    
+    static let OAuthPath = "https://github.com/login/oauth/access_token"
     
     case getPublic(String?)
-    case getMyStarted()
+    case getUserGists()
+    case basicAuth(user: String, passord: String)
+    case OAuth2(clientID: String, clientSecret: String, code: String)
     
     
     private var method: HTTPMethod {
         switch self {
-        case .getPublic, .getMyStarted:
+        case .getPublic, .basicAuth, .getUserGists:
             return .get
+        case .OAuth2:
+            return .post
         }
     }
     
@@ -42,8 +62,10 @@ enum GistRouter: URLRequestConvertible {
                 return URL(string: nextPageURL)!
             }
             casePath = "gists/public"
-        case .getMyStarted():
+        case .basicAuth, .getUserGists:
             casePath = "gists/starred"
+        case .OAuth2:
+            return URL(string: GistRouter.OAuthPath)!
         }
         
         let url = URL(string: GistRouter.baseURLString)!.appendingPathComponent(casePath)
@@ -52,8 +74,12 @@ enum GistRouter: URLRequestConvertible {
     
     private var parameters: [String: Any]? {
         switch self {
-        case .getPublic, .getMyStarted():
+        case .getPublic, .basicAuth, .getUserGists:
             return nil
+        case .OAuth2(let clientID, let clientSecret, let code):
+            return  ["client_id": clientID,
+                     "client_secret": clientSecret,
+                     "code": code]
         }
     }
 }
