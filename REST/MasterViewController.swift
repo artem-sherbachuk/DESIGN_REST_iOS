@@ -12,6 +12,7 @@ final class MasterViewController: UITableViewController {
 
     @IBOutlet var gistsTableView: GistsTableView!
     @IBOutlet weak var pullToRefresh: UIRefreshControl!
+    @IBOutlet weak var gistsAccsesSegmentControl: UISegmentedControl!
     
     var detailViewController: DetailViewController? = nil
     
@@ -51,29 +52,42 @@ final class MasterViewController: UITableViewController {
         super.viewWillAppear(animated)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if !GitHubAPIService.isHasOAuthToken() {
-            GitHubAPIService.OAuth2Login(fromVC: self)
-        }
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
     func loadGistsFromNetwork() {
-        GitHubAPIService.fetchPublicGists { result in
-            if let error = result.error {
-                self.handleLoadGistsError(error)
+        
+        func fetch(req: GistRouter) {
+            GitHubAPIService.fetchGists(url: req) { result in
+                if let error = result.error {
+                    self.handleLoadGistsError(error)
+                }
+                if let fetchedGists = result.value {
+                    self.gists = self.gists + fetchedGists
+                }
+                
+                if self.pullToRefresh.isRefreshing {
+                    self.pullToRefresh.endRefreshing()
+                }
             }
-            if let fetchedGists = result.value {
-                self.gists = self.gists + fetchedGists
-            }
-            
-            if self.pullToRefresh.isRefreshing {
-               self.pullToRefresh.endRefreshing()
+        }
+        
+        
+        if gistsAccsesSegmentControl.selectedSegmentIndex == 0 {
+            let publicGists = GistRouter.getPublic()
+            fetch(req: publicGists)
+            return
+        }
+        
+        if gistsAccsesSegmentControl.selectedSegmentIndex == 1 {
+            let userGists = GistRouter.getUserGists()
+            if !GitHubAPIService.isHasOAuthToken() {
+                GitHubAPIService.OAuth2Login(fromVC: self) { error in
+                    if error != nil {
+                        self.handleLoadGistsError(error!)
+                    } else {
+                        fetch(req: userGists)
+                    }
+                }
+            } else {
+                fetch(req: userGists)
             }
         }
     }
@@ -91,6 +105,11 @@ final class MasterViewController: UITableViewController {
 
     @IBAction func pullToRefresh(_ sender: UIRefreshControl) {
         GitHubAPIService.clearAllCache()
+        self.gists.removeAll()
+        self.loadGistsFromNetwork()
+    }
+    
+    @IBAction func gistsAcsessAction(_ sender: UISegmentedControl) {
         self.gists.removeAll()
         self.loadGistsFromNetwork()
     }

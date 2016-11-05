@@ -22,22 +22,22 @@ import Locksmith
 enum GitHubAPIManagerError: Error {
     case netWork(error: Error)
     case apiProviderError(reason: String)
-    case authCouldNot(reason: String)
     case objectSerialization(reason: String)
 }
 
 final class GitHubAPIService: NSObject {
-    fileprivate static let sharedInstance = GitHubAPIService()
+    static let sharedInstance = GitHubAPIService()
     
-    private var nextGistsPageURL: String?
-    private var isLoading = false
+    private(set) var nextGistsPageURL: String?
+    private(set) var isLoading = false
     
+    typealias FetchingGistsCompletiomn = (Result<[Gist]>) -> Void
     
-    static func fetchPublicGists(completion: @escaping (Result<[Gist]>) -> Void) {
+    static func fetchGists(url: URLRequestConvertible, completion: @escaping FetchingGistsCompletiomn) {
         let service = GitHubAPIService.sharedInstance
         if GitHubAPIService.sharedInstance.isLoading {return} //don't try load if loading not ended
         service.isLoading = true
-        Alamofire.request(GistRouter.getPublic(service.nextGistsPageURL)).responseJSON { (response) in
+        Alamofire.request(url).responseJSON { (response) in
             let result = service.gistArrayFromResponse(response: response)
             service.nextGistsPageURL = service.parseNextPageFromHeaders(response: response.response)
             completion(result)
@@ -90,20 +90,16 @@ final class GitHubAPIService: NSObject {
     }
     
     
-    static func printUserGists() { //require authentification
-        let req = GistRouter.getUserGists()
-        Alamofire.request(req).responseString { response in
-            guard let receivedString = response.result.value else {return}
-            debugPrint(receivedString)
-        }
-    }
-    
-    
     //MARK: - OAuth2
     //---------------------------------------------------------------------------------//
     private static let clientID = "e1af210403d248c875c0"
     private static let clientSecret = "c109ebdeed7636e133c076c8dc8f25cfe4713a32"
+    
     fileprivate weak var safariVC: SFSafariViewController?
+    
+    typealias OAuthCompletion = (Error?) -> Void
+    private var authCompletion: OAuthCompletion?
+    
     private var OAuthToken: String? {
         set {
             guard let newValue = newValue else {
@@ -131,20 +127,24 @@ final class GitHubAPIService: NSObject {
     }
     
     
-    static func OAuth2Login(fromVC: UIViewController) {
+    static func OAuth2Login(fromVC: UIViewController, completion: @escaping OAuthCompletion) {
+        let service = GitHubAPIService.sharedInstance
+        
         let actionSheet = UIAlertController(title: "Github Authorization",
                                             message: "You must authorize to be able use advanced feature of this app",
                                             preferredStyle: .actionSheet)
-        let gitOAuth = UIAlertAction(title: "Git OAuth", style: .default, handler: { _ in
-            let service = GitHubAPIService.sharedInstance
+        let gitOAuth = UIAlertAction(title: "Git OAuth", style: .default) { _ in
+            service.authCompletion = completion
             let authURL = URL(string: "https://github.com/login/oauth/authorize?client_id=\(clientID)&scope=gist&state=TEST_STATE")!
             let safariVC = SFSafariViewController(url: authURL)
             service.safariVC = safariVC
             service.safariVC!.delegate = service
             fromVC.present(service.safariVC!, animated: true, completion: nil)
-        })
+        }
         actionSheet.addAction(gitOAuth)
-        let cancel = UIAlertAction(title: "Cancel", style: .destructive, handler: nil)
+        let cancel = UIAlertAction(title: "Cancel", style: .destructive) { _ in
+            service.authCompletion = nil
+        }
         actionSheet.addAction(cancel)
         fromVC.present(actionSheet, animated: true, completion: nil)
     }
@@ -162,13 +162,16 @@ final class GitHubAPIService: NSObject {
         let urlRequest = GistRouter.OAuth2(clientID: clientID, clientSecret: clientSecret, code: code)
         Alamofire.request(urlRequest)
             .responseString { response in
+                let service = GitHubAPIService.sharedInstance
                 guard let result = response.result.value, response.result.error == nil else {
-                    print(response.result.error!); return;
+                    print(response.result.error!)
+                    service.authCompletion?(response.result.error!)
+                    return
                 }
                 let token = result.replacingOccurrences(of: "access_token=", with: "")
                     .replacingOccurrences(of: "&scope=gist&token_type=bearer", with: "")//remove messy, get token code
-                GitHubAPIService.sharedInstance.OAuthToken = token
-                GitHubAPIService.printUserGists()
+                service.OAuthToken = token
+                service.authCompletion?(nil)
         }
         
     }
@@ -182,3 +185,4 @@ extension GitHubAPIService: SFSafariViewControllerDelegate {
         }
     }
 }
+ 

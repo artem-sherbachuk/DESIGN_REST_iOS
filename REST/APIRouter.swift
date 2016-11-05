@@ -38,7 +38,7 @@ enum GistRouter: URLRequestConvertible {
     static let baseURLString = "https://api.github.com/"
     static let OAuthPath = "https://github.com/login/oauth/access_token"
     
-    case getPublic(String?)
+    case getPublic()
     case getUserGists()
     case basicAuth(user: String, passord: String)
     case OAuth2(clientID: String, clientSecret: String, code: String)
@@ -57,8 +57,8 @@ enum GistRouter: URLRequestConvertible {
         
         let casePath: String
         switch self {
-        case .getPublic(let nextPageURL):
-            if let nextPageURL = nextPageURL { //if alredy have url to next page then don't construct it
+        case .getPublic:
+            if let nextPageURL = GitHubAPIService.sharedInstance.nextGistsPageURL { //if alredy have url to next page then don't construct it
                 return URL(string: nextPageURL)!
             }
             casePath = "gists/public"

@@ -13,6 +13,9 @@ final class GistsTableView: UITableView, UITableViewDataSource, UITableViewDeleg
     override func awakeFromNib() {
         self.dataSource = self
         self.delegate = self
+        if let image = UIImage(named: "bgTextureDark") {
+            self.backgroundColor = UIColor(patternImage: image)
+        }
     }
 
     var gists: [Gist] = [] {
@@ -48,7 +51,7 @@ final class GistsTableView: UITableView, UITableViewDataSource, UITableViewDeleg
         let rowsLoaded = gists.count
         let rowsRemaining = rowsLoaded - indexPath.row
         let loadingThreshold = 5
-        return rowsRemaining <= loadingThreshold
+        return (rowsRemaining <= loadingThreshold) && (gists.count > loadingThreshold)
     }
     
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
