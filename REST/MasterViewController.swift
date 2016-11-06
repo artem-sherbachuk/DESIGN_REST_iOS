@@ -80,8 +80,8 @@ final class MasterViewController: UITableViewController, NVActivityIndicatorView
             return
         }
         
-        if gistsAccsesSegmentControl.selectedSegmentIndex == 1 {
-            let userGists = GistRouter.getUserGists()
+        if gistsAccsesSegmentControl.selectedSegmentIndex == 1 || gistsAccsesSegmentControl.selectedSegmentIndex == 2 {
+            let userGists = gistsAccsesSegmentControl.selectedSegmentIndex == 1 ? GistRouter.getUserGists() : GistRouter.getStarredGists()
             if !GitHubAPIService.isHasOAuthToken() {
                 GitHubAPIService.OAuth2Login(fromVC: self) { error in
                     if error != nil {
