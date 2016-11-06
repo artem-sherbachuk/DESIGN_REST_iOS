@@ -10,4 +10,4 @@ modularizing
 
 SOLID
 
-![alt text][https://github.com/artem-exd/DESIGN_REST_iOS/blob/master/Screen%20Shot%202016-11-07%20at%2012.46.52%20AM.png?raw=true]
+![rest ios](https://github.com/artem-exd/DESIGN_REST_iOS/blob/master/Screen%20Shot%202016-11-07%20at%2012.46.52%20AM.png?raw=true)
