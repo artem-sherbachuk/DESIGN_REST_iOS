@@ -13,7 +13,7 @@ final class MasterViewController: UITableViewController, NVActivityIndicatorView
 
     @IBOutlet var gistsTableView: GistsTableView!
     @IBOutlet weak var pullToRefresh: UIRefreshControl!
-    @IBOutlet weak var gistsAccsesSegmentControl: UISegmentedControl!
+    @IBOutlet weak var gistsAccsesSegmentControl: GistsSegmentedControl!
     
     var detailViewController: DetailViewController? = nil
     
@@ -53,7 +53,7 @@ final class MasterViewController: UITableViewController, NVActivityIndicatorView
         super.viewWillAppear(animated)
     }
     
-    func loadGistsFromNetwork() {
+    private func loadGistsFromNetwork() {
         
         func fetch(req: GistRouter) {
             startAnimating(CGSize(width: 50, height: 50), message: "loading", type: .ballTrianglePath, color: .yellow)
@@ -74,13 +74,13 @@ final class MasterViewController: UITableViewController, NVActivityIndicatorView
         }
         
         
-        if gistsAccsesSegmentControl.selectedSegmentIndex == 0 {
+        if gistsAccsesSegmentControl.isPublicGistsSelected() {
             let publicGists = GistRouter.getPublic()
             fetch(req: publicGists)
             return
         }
         
-        if gistsAccsesSegmentControl.selectedSegmentIndex == 1 || gistsAccsesSegmentControl.selectedSegmentIndex == 2 {
+        if gistsAccsesSegmentControl.isPrivateGistsSelected() {
             let userGists = gistsAccsesSegmentControl.selectedSegmentIndex == 1 ? GistRouter.getUserGists() : GistRouter.getStarredGists()
             if !GitHubAPIService.isHasOAuthToken() {
                 GitHubAPIService.OAuth2Login(fromVC: self) { error in
@@ -96,14 +96,14 @@ final class MasterViewController: UITableViewController, NVActivityIndicatorView
         }
     }
     
-    func handleLoadGistsError(_ error: Error) {
+    private func handleLoadGistsError(_ error: Error) {
         self.gists.removeAll()
         let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
 
-    func insertNewObject(_ sender: Any) {
+    @objc private func insertNewObject(_ sender: Any) {
         let alert = UIAlertController(title: "Not Implemented",
                                       message: "Can't create new gists yet, will implement later",
                                       preferredStyle: .alert)
@@ -117,7 +117,8 @@ final class MasterViewController: UITableViewController, NVActivityIndicatorView
         self.loadGistsFromNetwork()
     }
     
-    @IBAction func gistsAcsessAction(_ sender: UISegmentedControl) {
+    @IBAction func gistsAcsessAction(_ sender: GistsSegmentedControl) {
+        sender.animateSegment()
         self.gists.removeAll()
         self.loadGistsFromNetwork()
     }
