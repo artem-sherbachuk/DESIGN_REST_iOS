@@ -41,10 +41,13 @@ final class MasterViewController: UITableViewController, NVActivityIndicatorView
         
         loadGistsFromNetwork()
         
-        gistsTableView.onLoadMoreGistsEvent { [weak self] in
+        gistsTableView.onLoadMoreGistsEvent { [weak self] _ in
             if let s = self {
                 s.loadGistsFromNetwork()
             }
+        }
+        gistsTableView.onSelectGistEvent { [weak self] gist in
+            self?.performSegue(withIdentifier: "ShowDetailSegue", sender: gist)
         }
     }
 
@@ -126,9 +129,8 @@ final class MasterViewController: UITableViewController, NVActivityIndicatorView
     // MARK: - Segues
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showDetail" {
-            if let indexPath = self.tableView.indexPathForSelectedRow {
-                let gist = gists[indexPath.row]
+        if segue.identifier == "ShowDetailSegue" {
+            if let gist = sender as? Gist {
                 let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
                 controller.gist = gist
                 controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem

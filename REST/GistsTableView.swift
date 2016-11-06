@@ -24,9 +24,12 @@ final class GistsTableView: UITableView, UITableViewDataSource, UITableViewDeleg
         }
     }
     
-    typealias EventCompletion = (Void) -> Void //event instead of delegate
-    private var loadMoreGistsEventCompletion: EventCompletion?
-
+    typealias LoadMoreGistsEventCompletion = (Void) -> Void
+    private var loadMoreGistsEventCompletion: LoadMoreGistsEventCompletion?
+    
+    typealias SelectedGistEventCompletion = (_ gist: Gist) -> Void
+    private var selectedGistEventCompletion: SelectedGistEventCompletion?
+    
     
     // MARK: - Table View
     
@@ -54,23 +57,17 @@ final class GistsTableView: UITableView, UITableViewDataSource, UITableViewDeleg
         return (rowsRemaining <= loadingThreshold) && (gists.count > loadingThreshold)
     }
     
-    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return false
-    }
-    
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            gists.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
-        }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.selectedGistEventCompletion?(gists[indexPath.row])
     }
     
     
     //MARK: Public API
-    func onLoadMoreGistsEvent(comletion: @escaping EventCompletion) {
+    func onLoadMoreGistsEvent(comletion: @escaping LoadMoreGistsEventCompletion) {
         self.loadMoreGistsEventCompletion = comletion
+    }
+    
+    func onSelectGistEvent(completion: @escaping SelectedGistEventCompletion) {
+        self.selectedGistEventCompletion = completion
     }
 }

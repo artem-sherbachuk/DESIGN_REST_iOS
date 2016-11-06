@@ -8,7 +8,7 @@
 
 import UIKit
 
-class GistsSegmentedControl: UISegmentedControl {
+final class GistsSegmentedControl: UISegmentedControl {
 
     func isPublicGistsSelected() -> Bool {
         return self.selectedSegmentIndex == 0

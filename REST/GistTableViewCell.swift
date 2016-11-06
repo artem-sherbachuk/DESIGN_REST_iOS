@@ -10,7 +10,7 @@ import UIKit
 import PINRemoteImage
 
 @IBDesignable
-class GistTableViewCell: UITableViewCell {
+final class GistTableViewCell: UITableViewCell {
     
     override func prepareForInterfaceBuilder() {
         addDesign()

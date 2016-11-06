@@ -45,7 +45,7 @@
         <scene sceneID="smW-Zh-WAh">
             <objects>
                 <tableViewController title="Master" clearsSelectionOnViewWillAppear="NO" id="7bK-jq-Zjz" customClass="MasterViewController" customModule="REST" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="75" sectionHeaderHeight="22" sectionFooterHeight="22" id="r7i-6Z-zg0" customClass="GistsTableView" customModule="REST" customModuleProvider="target">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="75" sectionHeaderHeight="22" sectionFooterHeight="22" id="r7i-6Z-zg0" customClass="GistsTableView" customModule="REST" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
@@ -74,9 +74,6 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <connections>
-                                    <segue destination="cnX-ox-Pxi" kind="showDetail" id="Wgu-9U-bRd"/>
-                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <sections/>
@@ -84,7 +81,7 @@
                     <navigationItem key="navigationItem" id="Zdf-7t-Un8">
                         <nil key="title"/>
                         <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="s3A-QW-Snw" customClass="GistsSegmentedControl" customModule="REST" customModuleProvider="target">
-                            <rect key="frame" x="45.5" y="7" width="284" height="30"/>
+                            <rect key="frame" x="46" y="7" width="284" height="30"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <segments>
                                 <segment title="Public Gists"/>
@@ -124,6 +121,7 @@
                         <outlet property="gistsAccsesSegmentControl" destination="s3A-QW-Snw" id="dh7-lH-iTR"/>
                         <outlet property="gistsTableView" destination="r7i-6Z-zg0" id="Ic6-8M-Nfy"/>
                         <outlet property="pullToRefresh" destination="uy8-gQ-Fmx" id="I9P-Nm-nhw"/>
+                        <segue destination="cnX-ox-Pxi" kind="show" identifier="ShowDetailSegue" id="d0F-QK-dX4"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Rux-fX-hf1" sceneMemberID="firstResponder"/>
@@ -142,6 +140,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Wgu-9U-bRd"/>
+        <segue reference="d0F-QK-dX4"/>
     </inferredMetricsTieBreakers>
 </document>

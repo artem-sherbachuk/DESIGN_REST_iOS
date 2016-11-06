@@ -10,36 +10,21 @@ import UIKit
 
 final class DetailViewController: UIViewController {
 
-    @IBOutlet weak var detailDescriptionLabel: UILabel!
-
-
-    func configureView() {
-        // Update the user interface for the detail item.
-        if let gist = self.gist {
-            if let label = self.detailDescriptionLabel {
-                label.text = gist.description
-            }
-        }
-    }
+    var gist: Gist?
+    
+    @IBOutlet weak var webView: UIWebView!
+    @IBOutlet weak var descriptionLabel: UILabel!
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        self.configureView()
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-
-    var gist: Gist? {
-        didSet {
-            // Update the view.
-            self.configureView()
+        
+        if let file = gist?.files?.first, let fileURL = file.rawURL, let fileName = file.fileName {
+            let req = URLRequest(url: URL(string: fileURL)!)
+            webView.loadRequest(req)
+            descriptionLabel.text = fileName
         }
     }
-
-
 }
 

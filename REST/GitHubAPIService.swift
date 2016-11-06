@@ -27,9 +27,13 @@ enum GitHubAPIManagerError: Error {
 
 final class GitHubAPIService: NSObject {
     static let sharedInstance = GitHubAPIService()
+    private(set) var isLoading = false
+    
+    
+    //MARK: - Fetch Gists
+    //---------------------------------------------------------------------------------//
     
     private(set) var nextGistsPageURL: String?
-    private(set) var isLoading = false
     
     typealias FetchGistsCompletion = (Result<[Gist]>) -> Void
     
@@ -76,12 +80,14 @@ final class GitHubAPIService: NSObject {
             let errorMessage = jsonDictionary["message"] as? String {
             return .failure(GitHubAPIManagerError.apiProviderError(reason: errorMessage))
         }
-        
+        debugPrint(jsonArray)
         let gists = jsonArray.flatMap{ Gist(json: $0) }
         return Result.success(gists)
     }
     
     
+    //MARK: - Cache
+    //---------------------------------------------------------------------------------//
     static func clearAllCache() {
         let service = GitHubAPIService.sharedInstance
         service.nextGistsPageURL = nil
@@ -177,6 +183,8 @@ final class GitHubAPIService: NSObject {
     }
 }
 
+
+//MARK: SFSafariViewControllerDelegate
 extension GitHubAPIService: SFSafariViewControllerDelegate {
     func safariViewController(_ controller: SFSafariViewController, didCompleteInitialLoad didLoadSuccessfully: Bool) {
         if !didLoadSuccessfully {
