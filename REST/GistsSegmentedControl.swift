@@ -17,7 +17,7 @@ class GistsSegmentedControl: UISegmentedControl {
         return self.selectedSegmentIndex == 1 || self.selectedSegmentIndex == 2
     }
 
-    func animateSegment() {
+    func animateSelectedSegment() {
         if let segments = self.value(forKey: "_segments") as? NSArray,
             let segment = segments.object(at: self.selectedSegmentIndex) as? UIView {
             segment.transform = CGAffineTransform(scaleX: 0.1, y: 1)
@@ -25,5 +25,10 @@ class GistsSegmentedControl: UISegmentedControl {
                 segment.transform = CGAffineTransform(scaleX: 1, y: 1)
             }, completion: nil)
         }
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        animateSelectedSegment()
     }
 }

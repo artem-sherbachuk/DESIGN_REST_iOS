@@ -118,7 +118,6 @@ final class MasterViewController: UITableViewController, NVActivityIndicatorView
     }
     
     @IBAction func gistsAcsessAction(_ sender: GistsSegmentedControl) {
-        sender.animateSegment()
         self.gists.removeAll()
         self.loadGistsFromNetwork()
     }
